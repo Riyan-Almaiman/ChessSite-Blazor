@@ -1,0 +1,160 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Components.Forms
+
+@inject HttpClient Http
+
+
+<body>
+
+@if (lobbystatus != "Joined"){
+
+
+    <EditForm Model="@Lobbyname" OnValidSubmit="CreateLobby">
+
+
+        <InputText @bind-Value="Lobbyname.lobby" />
+
+        <button>Create Lobby</button>
+        @if (lobbystatus == "CantCreate")
+        {
+            <p>lobby already exists</p>
+        }
+
+
+
+    </EditForm>
+    <p></p>
+    <p></p>
+
+    <p></p>
+    <p></p>
+
+
+    <EditForm Model="@Lobbyname" OnValidSubmit="JoinLobby">
+
+
+        <InputText @bind-Value="Lobbyname.lobby" />
+
+        <button>Join Lobby</button>
+
+        @if (lobbystatus == "JoinFailed")
+        {
+            <p>lobby is full or doesnt exist</p>
+        }
+
+
+        </EditForm >
+
+}
+
+else{
+    <Index LobbyName="@Lobbyname.lobby"/>
+
+}
+
+@*<div class ="chat" >
+<div class="chat-messages">
+    @foreach (var message in messages)
+    {
+        <div>@message</div>
+    }
+</div>
+
+    <input type="text" @bind="newMessage" placeholder="Type your message here..." />
+    <button @onclick="SendMessage">Send</button>
+</div>*@
+
+</body>
+@code {
+
+    private List<string> messages = new List<string>();
+    private string newMessage;
+
+    private void SendMessage()
+    {
+        messages.Add(newMessage);
+        newMessage = "";
+    }
+    public string? lobbystatus;
+    public class lobbyname
+    {
+        public string? lobby;
+
+
+    }
+
+    public lobbyname Lobbyname = new();
+    public bool ingame; 
+
+    async Task JoinLobby()
+    {
+
+        if (Lobbyname.lobby != null)
+        {
+
+            HttpResponseMessage response;
+
+            response = await Http.PutAsJsonAsync<string>("Lobbies/JoinLobby",  Lobbyname.lobby);
+
+            string status = await response.Content.ReadAsStringAsync();
+
+            if(status == "Joined")
+            {
+                lobbystatus = "Joined";
+
+            }
+            else if (status == "JoinFailed")
+            {
+                lobbystatus = "JoinFailed";
+
+            }
+
+        }
+
+
+
+    }
+
+    async Task CreateLobby()
+    {
+
+        if (Lobbyname.lobby != null)
+        {
+
+            HttpResponseMessage response;
+
+            response = await Http.PutAsJsonAsync<string>("/Lobbies/CreateLobby", Lobbyname.lobby);
+
+            string status = await response.Content.ReadAsStringAsync();
+
+            if(status == "Created")
+            {
+                lobbystatus = "Joined";
+
+            }
+
+            else
+            {
+                lobbystatus = "CantCreate";
+
+
+            }
+
+        }
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

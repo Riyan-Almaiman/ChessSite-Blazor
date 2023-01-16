@@ -1,0 +1,99 @@
+﻿/*
+
+.page {
+    margin:0; 
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+    grid-template-columns: repeat(5,1fr);
+    grid-template-rows: repeat(4,1fr);
+    grid-template-areas:
+        ' .  board board board .   '
+        'create board board board chat'
+        'join board board board chat'
+        '. board board board .';
+
+}*/
+
+
+
+
+
+.create {
+    position:center;
+    background-color: #d0e6d0;
+    border: 1px solid black;
+    grid-area: create;
+}
+.chat {
+    background-color: #d0e6d0;
+    border: 1px solid black;
+    grid-area: chat;
+}
+.join {
+    background-color: #d0e6d0;
+    border: 1px solid black;
+    grid-area: join;
+}
+
+
+.board1 {
+    width: 60%;
+    height: 60%;
+    display: grid;
+    grid-template-columns: repeat(8,1fr);
+    grid-template-rows: repeat(8,1fr);
+    border: 1px solid black;
+    grid-area: board1;
+}
+.board2 {
+    width: 60%;
+    height: 60%;
+    display: grid;
+    grid-template-columns: repeat(8,1fr);
+    grid-template-rows: repeat(8,1fr);
+    border: 1px solid black;
+    grid-area: board2;
+}
+.white {
+    color: #EA9010;
+}
+
+.black {
+    color: #90BE6D;
+}
+
+.board1 div {
+    border: 1px solid black;
+    font-size: 65px;
+}
+
+.board2 div {
+    border: 1px solid black;
+    font-size: 65px;
+}
+.whiteSquare {
+    background-color: #EAEFBD;
+}
+.blackSquare {
+    background-color: #37371F;
+}
+
+.whiteSquare1 {
+    background-color: #EAEFBD;
+}
+.blackSquare1 {
+    background-color: #37371F;
+}
+
+
+.move {
+    background-color: #90BE6D;
+}
+.move1 {
+    background-color: #EA9010;
+}
+
+.active{border: 3px solid red !important; }
