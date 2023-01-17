@@ -8,59 +8,22 @@
 
     [Parameter] public string? LobbyName { get; set; }
     public Board board = new();
-    public HubConnection hubconnection; 
-    public int TurnNumber = 1;
-
+    public HubConnection hubconnection;
+    public int TurnNumber;
+    public bool isgameover = false; 
+    [Parameter] public Lobby lobby { get; set; }
     public int Player;
 
 
     protected override async Task  OnInitializedAsync()
     {
 
-        for (int i = 7; i >= 0; i--)
-        {
-            for (int j = 7; j >= 0; j--)
-            {
-                board.TileAddresses[i, j] = Columns[j] + Rows[i];
-            }
-        }
-        for (int i = 0; i <= 7; i++)
-        {
-            for (int j = 0; j <= 7; j++)
-            {
-                if (i == 0) { board.BoardLayout[i, j] = Player2pieces[j]; }
-
-                else if (i == 7) { board.BoardLayout[i, j] = Player1pieces[j]; }
-
-                else if (i == 6) { board.BoardLayout[i, j] = $"p{j + 1}"; }
-
-                else if (i == 1) { board.BoardLayout[i, j] = $"P{j + 1}"; }
-
-                else { board.BoardLayout[i, j] = "  "; }
-
-
-            }
-        }
-        for (int i = 0; i < 8; i++)
-        {
-
-            for (int j = 0; j < 8; j++)
-            {
-                board.BoardState.Add(board.TileAddresses[i, j], board.BoardLayout[i, j]);
-
-
-
-
-
-            }
-
-
-        }
         hubconnection = new HubConnectionBuilder()
                   .WithUrl(Navigation.ToAbsoluteUri("/GameHub"))
                   .Build();
         await hubconnection.StartAsync();
         await hubconnection.SendAsync("JoinLobby", LobbyName, hubconnection.ConnectionId);
+
 
 
         hubconnection.On<string, string>("ReceiveMove", (tildadd, piece) =>
@@ -71,12 +34,20 @@
 
         hubconnection.On<int>("playernumber", (playernumber) =>
      {
+
          Player = playernumber;
+         board.BoardLayout = lobby.boardstate;
+         board.BoardState = lobby.lobbystate;
+         TurnNumber = lobby.turn;
+         board.TileAddresses = lobby.TileAddresses;
+
          StateHasChanged();
 
 
      });
-        
+
+
+
 
 
     }
@@ -93,19 +64,45 @@
         board.BoardState[tileadd] = piece;
 
         board.BoardState[board.TileAddresses[index2[0], index2[1]]] = "  ";
-
+        int count = 0; 
         TurnNumber++;
         SelectedPiece=null;
+        if (piece.ToUpper() == piece)
+        {
+            foreach (string i in board.BoardLayout)
+            {
+                if (i.ToUpper() != i && i != "  ")
+                {
+                    foreach (string a in board.TileAddresses)
+                    {
+                        int[] arr = board.indexOfAddress(a);
+                        if (CheckMoves.IsValidMove(i, board.indexOfPiece(i), arr, board.BoardLayout, pieces) && CheckMoves.IsCheck(i, board.indexOfPiece(i), arr, board.BoardLayout, pieces)) { count++; }
+                    }
+                }
+            }
+        }
+        if (piece.ToUpper() != piece)
+        {
+            foreach (string i in board.BoardLayout)
+            {
+                if (i.ToUpper() == i && i != "  ")
+                {
+                    foreach (string a in board.TileAddresses)
+                    {
+                        int[] arr = board.indexOfAddress(a);
+                        if (CheckMoves.IsValidMove(i, board.indexOfPiece(i), arr, board.BoardLayout, pieces) && CheckMoves.IsCheck(i, board.indexOfPiece(i), arr, board.BoardLayout, pieces)) { count++; }
+                    }
+                }
+            }
+        }
 
+
+
+        if (count == 0) { isgameover = true; }
 
     }
 
-    string[] Rows = { "1", "2", "3", "4", "5", "6", "7", "8" };
-    string[] Columns = { "A", "B", "C", "D", "E", "F", "G", "H" };
 
-
-    string[] Player1pieces = { "r1", "n1", "b1", "k1", "q1", "b2", "n2", "r2" };
-    string[] Player2pieces = { "R1", "N1", "B1", "Q1", "K1", "B2", "N2", "R2" };
 
 
     public void move(string tileadd, string piece)
@@ -123,9 +120,40 @@
 
         TurnNumber++; 
         SelectedPiece=null;
-
+        int count =0; 
         Send(tileadd, piece);   
+        if (piece.ToUpper() == piece)
+        {
+            foreach(string i in board.BoardLayout)
+            {
+                if (i.ToUpper() != i&&i!="  ")
+                {
+                    foreach (string a in board.TileAddresses)
+                    {
+                        int[] arr = board.indexOfAddress(a);
+                        if (CheckMoves.IsValidMove(i, board.indexOfPiece(i), arr, board.BoardLayout, pieces) && CheckMoves.IsCheck(i, board.indexOfPiece(i), arr, board.BoardLayout, pieces)) { count++; }
+                    }
+                }
+            }
+        }
+        if (piece.ToUpper() != piece)
+        {
+            foreach (string i in board.BoardLayout)
+            {
+                if (i.ToUpper() == i && i != "  ")
+                {
+                    foreach (string a in board.TileAddresses)
+                    {
+                        int[] arr = board.indexOfAddress(a);
+                        if (CheckMoves.IsValidMove(i, board.indexOfPiece(i), arr, board.BoardLayout, pieces) && CheckMoves.IsCheck(i, board.indexOfPiece(i), arr, board.BoardLayout, pieces)) { count++; }
+                    }
+                }
+            }
+        }
 
+         
+        
+        if(count==0){ isgameover = true; }
 
     }
 
@@ -369,3 +397,35 @@
 
 
 <h1>Lobby Name: @LobbyName</h1>
+
+         @if(Player == 1)
+        {
+            if(isgameover)
+            {
+        <h1 style=" color:red">Game Over! Checkmate!</h1>
+                }
+
+             
+        else if (TurnNumber % 2 == 0){
+        <h1 style=" color:red"> Waiting for other player...</h1> }
+            else{ <h1 style="color:green">It's your turn!</h1>}
+            
+        }
+
+
+         @if(Player == 2)
+        {
+    if (isgameover)
+    {
+        <h1 style=" color:red">Game Over! Checkmate!</h1>
+    }
+
+    else if (TurnNumber % 2 != 0)
+    {
+        <h1 style=" color:red"> Waiting for other player...</h1>
+    }
+    else
+    {
+         <h1 style="color:green">It's your turn!</h1>
+    }
+        }

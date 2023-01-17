@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Components.Forms
+@using Newtonsoft.Json;
 
 @inject HttpClient Http
 
@@ -8,11 +9,11 @@
 
 @if (lobbystatus != "Joined"){
 
-
+    <div class="form">
     <EditForm Model="@Lobbyname" OnValidSubmit="CreateLobby">
 
 
-        <InputText @bind-Value="Lobbyname.lobby" />
+                <InputText style="width: 30%; height: 50px; font-size: 25px; margin-bottom:20px; margin-top: 20% " @bind-Value="Lobbyname.lobby" />
 
         <button>Create Lobby</button>
         @if (lobbystatus == "CantCreate")
@@ -33,7 +34,7 @@
     <EditForm Model="@Lobbyname" OnValidSubmit="JoinLobby">
 
 
-        <InputText @bind-Value="Lobbyname.lobby" />
+                <InputText style="width: 30%; height: 50px; font-size: 25px;  " @bind-Value="Lobbyname.lobby" />
 
         <button>Join Lobby</button>
 
@@ -44,13 +45,15 @@
 
 
         </EditForm >
-
+        </div>
 }
 
 else{
-    <Index LobbyName="@Lobbyname.lobby"/>
+    <Index LobbyName="@Lobbyname.lobby" lobby ="@lobby"/>
 
 }
+
+
 
 @*<div class ="chat" >
 <div class="chat-messages">
@@ -86,24 +89,25 @@ else{
     public lobbyname Lobbyname = new();
     public bool ingame; 
 
+    Lobby lobby; 
     async Task JoinLobby()
     {
 
         if (Lobbyname.lobby != null)
         {
 
-            HttpResponseMessage response;
+            HttpResponseMessage response = await Http.PutAsJsonAsync<string>("Lobbies/JoinLobby",  Lobbyname.lobby);
 
-            response = await Http.PutAsJsonAsync<string>("Lobbies/JoinLobby",  Lobbyname.lobby);
+            var customerJsonString = await response.Content.ReadAsStringAsync();
+            lobby = JsonConvert.DeserializeObject<Lobby>(custome‌​rJsonString);
 
-            string status = await response.Content.ReadAsStringAsync();
-
-            if(status == "Joined")
+            if(lobby != null)
             {
+                lobby.name = Lobbyname.lobby; 
                 lobbystatus = "Joined";
 
             }
-            else if (status == "JoinFailed")
+            else 
             {
                 lobbystatus = "JoinFailed";
 
@@ -121,15 +125,17 @@ else{
         if (Lobbyname.lobby != null)
         {
 
-            HttpResponseMessage response;
+            HttpResponseMessage response = await Http.PutAsJsonAsync<string>("/Lobbies/CreateLobby", Lobbyname.lobby);
+            var customerJsonString = await response.Content.ReadAsStringAsync();
+            lobby = JsonConvert.DeserializeObject<Lobby>(custome‌​rJsonString);
 
-            response = await Http.PutAsJsonAsync<string>("/Lobbies/CreateLobby", Lobbyname.lobby);
 
-            string status = await response.Content.ReadAsStringAsync();
-
-            if(status == "Created")
+            if(lobby != null)
             {
+                lobby.name = Lobbyname.lobby;
+
                 lobbystatus = "Joined";
+
 
             }
 

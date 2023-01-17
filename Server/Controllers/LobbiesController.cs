@@ -1,6 +1,10 @@
 using BlazorApp_empty2;
 using BlazorApp_empty2.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using System.Net;
+using System.Reflection;
 using System.Text.Json.Serialization;
 
 namespace BlazorAppServer.Controllers
@@ -23,27 +27,34 @@ namespace BlazorAppServer.Controllers
         {
 
             if (lobbies.LobbyList.ContainsKey(lobby) && lobbies.LobbyList[lobby].playercount<2) {
-                lobbies.LobbyList[lobby].playercount++; return Ok("Joined"); 
+                var test = JsonConvert.SerializeObject(lobbies.LobbyList[lobby]);
+
+                lobbies.LobbyList[lobby].playercount++; return Ok(test);
+                
             }
 
-            else { return Ok("JoinFailed"); }
+            else { return NotFound(null);  }
 
         }
 
         [HttpPut("CreateLobby")]
-        public ActionResult create([FromBody] string lobby)
+        public ActionResult create([FromBody]string lobby)
         {
-            if (lobbies.LobbyList.ContainsKey(lobby)) { return Ok("CantCreate"); }
+            if (lobbies.LobbyList.ContainsKey(lobby)) { return NotFound(null); }
 
             else
             {
-                
+
                 lobbies.LobbyList.Add(lobby, new Lobby(lobby));
                 lobbies.LobbyList[lobby].playercount++;
-                return Ok("Created"); 
+               
+                var test = JsonConvert.SerializeObject(lobbies.LobbyList[lobby]);
+                return Ok(test);
+
             }
         }
 
     }
 
+    
 }

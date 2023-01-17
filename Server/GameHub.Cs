@@ -19,7 +19,10 @@ namespace BlazorApp_empty2.Server
         {
             await Clients.GroupExcept(lobbyname, Context.ConnectionId).SendAsync("ReceiveMove", tildadd, piece);
 
+            lobbies.LobbyList[lobbyname].turn++;
 
+            lobbies.LobbyList[lobbyname].move(tildadd, piece)
+                ;
             Console.WriteLine($"sent from { Context.ConnectionId}"); 
         }
 
@@ -38,7 +41,7 @@ namespace BlazorApp_empty2.Server
             }
             else
             {
-
+               
                 lobbies.LobbyList[lobbyname].player2 = connectionid;
                 await Clients.Caller.SendAsync("playernumber", 2);
             }
