@@ -13,10 +13,11 @@
 
 
         }
+            
         if (piece.Contains('P'))
         {
 
-            return "\u265F";
+            return "\u2659";
 
 
         }

@@ -3,8 +3,9 @@ h1:focus {
     outline: none;
 }
 body {
-    background: #37371F;
-    text-align: center;
+    background: #0f2027; /* fallback for old browsers */
+    background: linear-gradient(to right,#2c5364, #203a43, #0f2027);
+    */ text-align: center;
 }
 
 #blazor-error-ui {

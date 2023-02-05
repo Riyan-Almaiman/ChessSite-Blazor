@@ -2,56 +2,65 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using Newtonsoft.Json;
 
+
 @inject HttpClient Http
-
-
+<head>
+ 
+</head>
 <body>
-
+ 
 @if (lobbystatus != "Joined"){
 
-    <div class="form">
     <EditForm Model="@Lobbyname" OnValidSubmit="CreateLobby">
 
+             <div class="form__group">
 
-                <InputText style="width: 30%; height: 50px; font-size: 25px; margin-bottom:20px; margin-top: 20% " @bind-Value="Lobbyname.lobby" />
+                <InputText type="text" class="form__input" id="name" placeholder="Lobby Name" style="width: 100%; height: 50px; font-size: 25px; margin-bottom:20px; margin-top: 20% " @bind-Value="Lobbyname.lobby" />
+                </div>  
+            <button  class="btn btn-outline-light">Create Lobby</button>
 
-        <button>Create Lobby</button>
         @if (lobbystatus == "CantCreate")
         {
-            <p>lobby already exists</p>
+            <p style="color:red">lobby already exists</p>
         }
 
 
 
     </EditForm>
-    <p></p>
-    <p></p>
-
-    <p></p>
-    <p></p>
+  
 
 
     <EditForm Model="@Lobbyname" OnValidSubmit="JoinLobby">
 
 
-                <InputText style="width: 30%; height: 50px; font-size: 25px;  " @bind-Value="Lobbyname.lobby" />
+            <button  class="btn btn-outline-light">Join Lobby</button>
 
-        <button>Join Lobby</button>
 
         @if (lobbystatus == "JoinFailed")
         {
-            <p>lobby is full or doesnt exist</p>
+            <p style="color:red">lobby is full or doesnt exist</p>
         }
 
 
-        </EditForm >
-        </div>
+            </EditForm >
+        }
+
+        else{
+            game();
+
 }
 
-else{
-    <Index LobbyName="@Lobbyname.lobby" lobby ="@lobby"/>
 
-}
+
+
+
+    @{
+        void game()
+        {
+             <Index LobbyName="@Lobbyname.lobby" lobby ="@lobby"/>
+
+        }
+    }
 
 
 
