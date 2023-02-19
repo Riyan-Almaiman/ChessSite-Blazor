@@ -17,7 +17,7 @@
         if (piece.Contains('P'))
         {
 
-            return "\u2659";
+            return "\u265F";
 
 
         }

@@ -15,13 +15,13 @@
 
              <div class="form__group">
 
-                <InputText type="text" class="form__input" id="name" placeholder="Lobby Name" style="width: 100%; height: 50px; font-size: 25px; margin-bottom:20px; margin-top: 20% " @bind-Value="Lobbyname.lobby" />
-                </div>  
-            <button  class="btn btn-outline-light">Create Lobby</button>
+                <InputText type="text" class="form__input" id="name" placeholder="Lobby Name" style="width: 50vw; height: 50px; font-size: 25px; margin-bottom:20px; margin-top: 20%; margin-left:25vw; " @bind-Value="Lobbyname.lobby" />
+                </div>
+            <button style="margin-left:50vw" class="btn btn-outline-light">Create Lobby</button>
 
         @if (lobbystatus == "CantCreate")
         {
-            <p style="color:red">lobby already exists</p>
+            <p style="margin-left:50vw;  color:red">lobby already exists</p>
         }
 
 
@@ -33,12 +33,12 @@
     <EditForm Model="@Lobbyname" OnValidSubmit="JoinLobby">
 
 
-            <button  class="btn btn-outline-light">Join Lobby</button>
+            <button style="margin-left:50vw" class="btn btn-outline-light">Join Lobby</button>
 
 
         @if (lobbystatus == "JoinFailed")
         {
-            <p style="color:red">lobby is full or doesnt exist</p>
+                <p style= "margin-left:50vw; color:red">lobby is full or doesnt exist</p>
         }
 
 
