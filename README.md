@@ -6,4 +6,4 @@ you can try it here https://shtranj.azurewebsites.net but I should emphasize it'
 
 There's also no logic for when a client disconnects - there should be a function in the hub to catch a disconnect and remove the connection id from the lobby so they can join back. Also lobby states aren't kept track currently on the server, so joining back doesn't work right currently. 
 
-There's a lot more issues left for it to be a fully functional app but I haven't had time or the motivation to fix those things yet
+There's a lot more issues left for it to be a fully functional app but I haven't had the time or the motivation to fix those things yet
